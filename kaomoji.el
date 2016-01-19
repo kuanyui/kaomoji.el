@@ -1,26 +1,46 @@
-;;; kaomoji.el --- Input emoji superb easily      -*- lexical-binding: t; -*-
+;;; kaomoji.el --- Input kaomoji superb easily      -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2016  kuanyui
+;; Author: Ono Hiroko <azazabc123@gmail.com>
+;; Keywords: tools, fun
+;; Package-Requires: ((emacs "24.3") (helm "1.9.1"))
+;; X-URL: https://github.com/kuanyui/kaomoji.el
+;; Version: {{VERSION}}
 
-;; Author: kuanyui <azazabc123@gmail.com>
-;; Keywords: tools
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;; Ono Hiroko (kuanyui) (ɔ) Copyleft 2016
+;;
+;; This program is free software. It comes without any warranty, to
+;; the extent permitted by applicable law. You can redistribute it
+;; and/or modify it under the terms of the Do What The Fuck You Want
+;; To Public License, Version 2, as published by Sam Hocevar. See
+;; http://www.wtfpl.net/ for more details.
 
 ;;; Commentary:
+;;
+;; Visit https://github.com/kuanyui/kaomoji.el
+;; to see screenshot & usage guide.
 
-;; 
+;; ======= Usage =======
+;; (require 'kaomoji), then M-x `kaomoji'
+;;
+;; === Customization ===
+;; Variables:
+
+;; `kaomoji-table' : The main table contains '(((ALIAS ...) . KAOMOJI) ...)
+;; You can customize like this to append new items to this talbe:
+;;
+;; (setq kaomoji-table
+;;       (append '((("angry" "furious") . "(／‵Д′)／~ ╧╧ ")
+;;                 (("angry" "punch") . "#ﾟÅﾟ）⊂彡☆))ﾟДﾟ)･∵"))
+;;               kaomoji-table))
+
+;; `kaomoji-patterns-inserted-along-with' : When your input (from Helm
+;; minibuffer) contains any of the patterns, insert the input along
+;; with the kaomoji.
+;;
+;; (setq kaomoji-patterns-inserted-along-with nil) to disable this
+;; function.
+
+;; `kaomoji-insert-user-input-at' : 'left-side or 'right-side
 
 ;;; Code:
 
@@ -28,19 +48,29 @@
 (require 'helm)
 (require 'kaomoji-data)
 
-(setq kaomoji-candidates-limit 9999)
-(setq kaomoji-buffer-name "*Kaomoji*")
-(setq kaomoji-prompt "Search Kaomoji: ")
+(defvar kaomoji-candidates-limit 9999)
+(defvar kaomoji-buffer-name "*Kaomoji*")
+(defvar kaomoji-prompt "Search Kaomoji: ")
+(defvar kaomoji-patterns-inserted-along-with
+  '("fuck" "shit"
+    "バカ" "くそう"
+    "幹" "靠")
+  "When your input matched any pattern in this list, the input
+  will be concatenate with kaomoji before being inserted.")
 
+(defvar kaomoji-insert-user-input-at 'right-side
+  "Which side to concatenate your input with kaomoji. The value
+  can be `left-side' or `right-side'.  This variable is working with
+  variable `kaomoji-patterns-inserted-along-with'")
+
+;;;###autoload
 (defun kaomoji ()
   (interactive)
   (helm :sources (helm-build-sync-source "Please input pattern to search Kaomoji: "
                    :candidates (lambda () (kaomoji-get-candidates helm-pattern))
                    :volatile t
-                   ;; :nohighlight t
-                   :action #'insert
-                   :candidate-number-limit kaomoji-candidates-limit
-                   )
+                   :action (lambda (str) (insert (kaomoji-process-the-string-to-insert helm-pattern str)))
+                   :candidate-number-limit kaomoji-candidates-limit)
         :buffer kaomoji-buffer-name
         :prompt kaomoji-prompt))
 
@@ -78,7 +108,23 @@ align & format the them as ((DISPLAY . REAL-KAOMOJI) ...)"
   (length (replace-regexp-in-string "\\cc" "xx" str)))
 
 (defun kaomoji-max (list)
-  (apply #'max list))
+  (if (and (listp list) list)
+      (apply #'max list)))
+
+(defun kaomoji-matched-pattern? (user-input)
+  "See variable `kaomoji-patterns-inserted-along-with'"
+  (some (lambda (pattern)
+          (string-match pattern user-input))
+        kaomoji-patterns-inserted-along-with))
+
+(defun kaomoji-process-the-string-to-insert (user-input kaomoji-string)
+  "Check if should concatenate USER-INPUT to KAOMOJI, then return
+the string for `insert'"
+  (if (not (kaomoji-matched-pattern? user-input))
+      kaomoji-string
+    (if (eq 'left-side kaomoji-insert-user-input-at)
+        (concat user-input " " kaomoji-string)
+      (concat kaomoji-string " " user-input))))
 
 (provide 'kaomoji)
 ;;; kaomoji.el ends here
