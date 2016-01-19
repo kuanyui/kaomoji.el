@@ -44,7 +44,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'helm)
 (require 'kaomoji-data)
 
@@ -89,7 +89,7 @@ align & format the them as ((DISPLAY . REAL-KAOMOJI) ...)"
 
 (defun kaomoji-internal-get-candidates (pattern)
   "Return ((MATCHED-STRING . KAOMOJI) ...)"
-  (remove-if
+  (cl-remove-if
    #'null
    (mapcar (lambda (row)
              (let ((matched (cl-member pattern (car row)
@@ -113,9 +113,9 @@ align & format the them as ((DISPLAY . REAL-KAOMOJI) ...)"
 
 (defun kaomoji-matched-pattern? (user-input)
   "See variable `kaomoji-patterns-inserted-along-with'"
-  (some (lambda (pattern)
-          (string-match pattern user-input))
-        kaomoji-patterns-inserted-along-with))
+  (cl-some (lambda (pattern)
+             (string-match pattern user-input))
+           kaomoji-patterns-inserted-along-with))
 
 (defun kaomoji-process-the-string-to-insert (user-input kaomoji-string)
   "Check if should concatenate USER-INPUT to KAOMOJI, then return
