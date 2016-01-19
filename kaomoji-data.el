@@ -58,16 +58,5 @@
     (("so pity" "你好可憐喔")                                       . "。･ﾟ･(つд`ﾟ)つ⑩))Д´)")
     ))
 
-(setq punctuation-table
-      '((("c degree" )                . "℃" )
-        (("book" )                    . "《》" )
-        (("paragraph" ) "【】" )
-        (("pz" ) "－" )
-        (("up" ) "↑" )
-        (("down" )                    . "↓" )
-        (("left" )                    . "←" )
-        (("right" ) "→" )
-        ))
-
 (provide 'kaomoji-data)
 ;;; kaomoji-data.el ends here
