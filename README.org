@@ -12,7 +12,10 @@
 You can search kaomoji via their aliases.
 
 ** Customization
-- =kaomoji-table= : The main table contains kaomojis & their aliases '(((ALIASES) . KAOMOJI) ...)
+- =kaomoji-table= : The main table contains kaomojis & their aliases =(((ALIASES... ) . KAOMOJI) ...)=
+
+You can set multiple alias (e.g. in different languages) for the same kaomoji.
+
 You can customize like this to append new items to this talbe:
 
 #+BEGIN_SRC elisp
