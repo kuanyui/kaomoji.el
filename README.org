@@ -1,0 +1,36 @@
+* Kaomoji.el - Input Kaomoji (顔文字) Easily!
+
+** Screenshot
+[[file:screenshot.png]]
+
+** Requirement
+- Emacs (tested on 24.5)
+- Helm (tested on 1.9.1)
+
+** Installation
+=(require 'kaomoji)=, then =M-x kaomoji= to input kaomoji.
+You can search kaomoji via their aliases.
+
+** Customization
+- =kaomoji-table= : The main table contains kaomojis & their aliases '(((ALIASES) . KAOMOJI) ...)
+You can customize like this to append new items to this talbe:
+
+#+BEGIN_SRC elisp
+(setq kaomoji-table
+      (append '((("angry" "furious") . "(／‵Д′)／~ ╧╧ ")
+                (("angry" "punch") . "#ﾟÅﾟ）⊂彡☆))ﾟДﾟ)･∵"))
+              kaomoji-table))
+#+END_SRC
+
+- =kaomoji-patterns-inserted-along-with= 
+
+  When your input (from Helm minibuffer) contains any of the patterns,
+  insert the input along with the kaomoji.
+
+  This function can be disabled by setting to nil.
+
+- =kaomoji-insert-user-input-at= : set it to =`left-side= or =`right-side=
+
+** License
+
+WTFPL 3.14159 or 2.0
