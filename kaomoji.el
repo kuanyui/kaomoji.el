@@ -45,21 +45,38 @@
         :prompt kaomoji-prompt))
 
 (defun kaomoji-get-candidates (pattern)
-  ""
+  "Get candidates list from `kaomoji-internal-get-candidates',
+align & format the them as ((DISPLAY . REAL-KAOMOJI) ...)"
+  (let* ((candidates-list (kaomoji-internal-get-candidates pattern))
+         (max-length (kaomoji-max (kaomoji-collect-lengths-of-matched-string candidates-list))))
+    (mapcar (lambda (x)
+              (cons (concat (propertize (car x) 'face 'font-lock-keyword)
+                            (make-string (- max-length (length (car x))) 32) ;`32' is space
+                            " => "
+                            (propertize (cdr x) 'face 'bold)) ;DISPLAY
+                    (cdr x)))     ;REAL
+            candidates-list)))
+
+(defun kaomoji-internal-get-candidates (pattern)
+  "Return ((MATCHED-STRING . KAOMOJI) ...)"
   (remove-if
    #'null
    (mapcar (lambda (row)
              (let ((matched (cl-member pattern (car row)
                                        :test (lambda (pat str) (string-match pat str)))))
                (if matched
-                   (cons (concat (propertize (car matched) 'face 'font-lock-keyword)
-                                 "   => "
-                                 (propertize (cdr row) 'face 'bold)) ;DISPLAY
-                         (cdr row))     ;REAL
+                   (cons (car matched) (cdr row)) ;Return this
                  nil)))          ; this will be removed
            kaomoji-table
-           ))
-  )
+           )))
+
+(defun kaomoji-collect-lengths-of-matched-string (list)
+  (mapcar (lambda (x) (length (car x))) list))
+
+(defun kaomoji-max (list)
+  (apply #'max list))
+
+
 
 (kaomoji-get-candidates "u")
 
