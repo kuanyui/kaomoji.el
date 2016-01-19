@@ -28,25 +28,40 @@
 (require 'helm)
 (require 'kaomoji-data)
 
-(setq kaomoji-candidates-limit nil)
+(setq kaomoji-candidates-limit 9999)
 (setq kaomoji-buffer-name "*Kaomoji*")
-(setq emoji-talbe-prompt "Search Emoji")
+(setq kaomoji-prompt "Search Kaomoji: ")
 
-(helm :source (helm-build-sync-source "Please input pattern to search Emoji: "
-                :candidates (lambda () (kaomoji-get-candidates helm-pattern))
-                :volatile t
-                :fuzzy-match nil
-                :candidate-number-limit kaomoji-candidates-limit
-                :action #'kaomoji-insert-this
-                :requires-pattern nil
-                )
-      :buffer kaomoji-buffer-name
-      :prompt kaomoji-prompt)
-
+(defun kaomoji ()
+  (interactive)
+  (helm :sources (helm-build-sync-source "Please input pattern to search Kaomoji: "
+                   :candidates (lambda () (kaomoji-get-candidates helm-pattern))
+                   :volatile t
+                   ;; :nohighlight t
+                   :action #'insert
+                   :candidate-number-limit kaomoji-candidates-limit
+                   )
+        :buffer kaomoji-buffer-name
+        :prompt kaomoji-prompt))
 
 (defun kaomoji-get-candidates (pattern)
   ""
+  (remove-if
+   #'null
+   (mapcar (lambda (row)
+             (let ((matched (cl-member pattern (car row)
+                                       :test (lambda (pat str) (string-match pat str)))))
+               (if matched
+                   (cons (concat (propertize (car matched) 'face 'font-lock-keyword)
+                                 "   => "
+                                 (propertize (cdr row) 'face 'bold)) ;DISPLAY
+                         (cdr row))     ;REAL
+                 nil)))          ; this will be removed
+           kaomoji-table
+           ))
   )
+
+(kaomoji-get-candidates "u")
 
 (provide 'kaomoji)
 ;;; kaomoji.el ends here
