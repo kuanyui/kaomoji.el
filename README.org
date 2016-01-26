@@ -1,5 +1,9 @@
 * Kaomoji.el - Input Kaomoji (顔文字) Easily!
 
+# Badge
+[[http://www.wtfpl.net/][https://img.shields.io/badge/license-WTFPL-brightgreen.svg]]
+[[http://melpa.org/#/kaomoji][http://melpa.org/packages/kaomoji-badge.svg]]
+
 ** Screenshot
 [[file:screenshot.png]]
 
