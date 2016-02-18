@@ -81,7 +81,7 @@ align & format the them as ((DISPLAY . REAL-KAOMOJI) ...)"
          (max-length (kaomoji-max (kaomoji-collect-lengths-of-matched-string candidates-list))))
     (mapcar (lambda (x)
               (cons (concat (propertize (car x) 'face 'font-lock-keyword)
-                            (make-string (- max-length (kaomoji-length (car x))) 32) ;`32' is space
+                            (make-string (- max-length (string-width (car x))) 32) ;`32' is space
                             " => "
                             (propertize (cdr x) 'face 'bold)) ;DISPLAY
                     (cdr x)))     ;REAL
@@ -101,11 +101,8 @@ align & format the them as ((DISPLAY . REAL-KAOMOJI) ...)"
            )))
 
 (defun kaomoji-collect-lengths-of-matched-string (list)
-  (mapcar (lambda (x) (kaomoji-length (car x)))
+  (mapcar (lambda (x) (string-width (car x)))
           list))
-
-(defun kaomoji-length (str)
-  (length (replace-regexp-in-string "\\cc" "xx" str)))
 
 (defun kaomoji-max (list)
   (if (and (listp list) list)
