@@ -2,7 +2,7 @@
 
 ;; Author: Ono Hiroko <azazabc123@gmail.com>
 ;; Keywords: tools, fun
-;; Package-Requires: ((emacs "24.3") (helm-core "1.9.1"))
+;; Package-Requires: ((emacs "24.3") (helm-core "3.6.0"))
 ;; X-URL: https://github.com/kuanyui/kaomoji.el
 ;; Version: {{VERSION}}
 
@@ -45,7 +45,7 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'helm)
+(require 'helm-core)
 (require 'kaomoji-data)
 
 (defvar kaomoji-candidates-limit 9999)
